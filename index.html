@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
+
+			.fenshu-content {
+				width: 500px;
+				height: 500px;
+				padding-top: 200px;
+				margin: 0 auto;
+				text-align: center;
+				background: #0099CC;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--评分模块-->
+		<div class="main-banner">
+
+			<!--圆圈百分比-->
+			<div class="fenshu-content">
+				<canvas id="fenshu-canvas" width="416" height="416" style="width: 208px;height: 208px;"></canvas>
+
+			</div>
+		</div>
+		<script>
+			window.onload = function() {
+
+				drawFrame();
+
+			}
+
+			//--------------------------打分圈功能--------------------------------------
+			var canvas = document.getElementById('fenshu-canvas'), //获取canvas元素
+				context = canvas.getContext('2d'), //获取画图环境，指明为2d
+				centerX = canvas.width / 2, //Canvas中心点x轴坐标
+				centerY = canvas.height / 2, //Canvas中心点y轴坐标
+				rad = Math.PI * 2 / 100, //将360度分成100份，那么每一份就是rad度
+				speed = 0.1; //加载的快慢就靠它了 
+
+			//绘制白色外圈
+			function whiteCircle(n) {
+				context.save();
+				context.strokeStyle = "#fff"; //设置描边样式
+				context.lineWidth = 10; //设置线宽
+				context.lineCap = 'round'; //设置线帽圆滑
+				context.beginPath(); //路径开始
+				context.arc(centerX, centerY, 200, -Math.PI / 2, -Math.PI / 2 + n * rad, false); //用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
+				context.stroke(); //绘制
+				context.closePath(); //路径结束
+				context.restore();
+			}
+
+			//绘制蓝色外圈
+			function blueCircle() {
+				context.save();
+				context.beginPath();
+				context.lineWidth = 4; //设置线宽
+				context.strokeStyle = "#6264FE";
+				context.arc(centerX, centerY, 200, 0, Math.PI * 2, false);
+				context.stroke();
+				context.closePath();
+				context.restore();
+			}
+
+			//百分比文字绘制
+			function text(n) {
+				context.save(); //save和restore可以保证样式属性只运用于该段canvas元素
+				context.strokeStyle = "#6262FE"; //设置描边样式
+				context.font = "114px 微软雅黑 "; //设置字体大小和字体
+				//绘制字体，并且指定位置
+				context.fillStyle = 'white';
+				if (n < 10) {
+					context.fillText(n.toFixed(0)+"%", centerX - 58, centerY + 40);
+				}
+				if (n >= 10 && n < 100) {
+					context.fillText(n.toFixed(0)+"%", centerX - 95, centerY + 40);
+				}
+				if (n >= 100) {
+					context.fillText(n.toFixed(0)+"%", centerX - 140, centerY + 40);
+				}
+				context.stroke(); //执行绘制
+				context.restore();
+			}
+
+			//动画循环，分数控制
+			function drawFrame() {
+
+				//启动动画，每帧回调一次
+				window.requestAnimationFrame(drawFrame, canvas);
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				blueCircle();
+				text(speed);
+				whiteCircle(speed);
+				var fenshus = fenshu();
+				if (speed > fenshus) {
+					speed = fenshus;
+					window.cancelAnimationFrame(window.requestAnimationFrame(drawFrame, canvas)); //停止动画刷新
+				}
+				speed += 3; //转动速度，越大变化越快
+
+				//setInterval(drawFrame,100);
+
+			};
+
+			//确定分数
+			function fenshu() {
+				var fenshu = 88;//此处输入你的分数
+				return fenshu - 3;
+
+			}
+
+			//--------------------------打分圈功能结束--------------------------------------
+		</script>
+	</body>
+
+</html>
